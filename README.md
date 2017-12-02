@@ -12,4 +12,4 @@ Run `make test` to build and run unit tests
 
 ## Example run
 
-[demo.mp4 - 420.4 kB](demo.mp4)
+![](images/demo.gif)
