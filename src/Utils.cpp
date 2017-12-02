@@ -16,7 +16,7 @@ vector<string> splitString(const string& input, char delimiter) {
 
 	size_t idx = 0;
 	size_t found = 0;
-	auto len = input.size();
+	size_t len = input.size();
 	while (idx < len && (found = input.find(delimiter, idx)) != string::npos) {
 		strings.push_back(input.substr(idx, found - idx));
 		idx = found + 1;
@@ -39,7 +39,7 @@ string trimLeft(const string& input) {
 	}
 
 	size_t idx = 0;
-	auto len = input.size();
+	size_t len = input.size();
 	while (idx < len && (input[idx] == ' ' || input[idx] == '\t')) {
 		++idx;
 	}
@@ -54,7 +54,7 @@ string trimRight(const string& input) {
 		return "";
 	}
 
-	auto count = input.size();
+	size_t count = input.size();
 	while (count > 0 && (input[count - 1] == ' ' || input[count - 1] == '\t')) {
 		--count;
 	}

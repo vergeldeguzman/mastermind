@@ -1,5 +1,5 @@
 /*
- * MasterMind.cpp
+ * RunGame.cpp
  *
  *  Created on: Nov 12, 2016
  *      Author: vergel
@@ -15,7 +15,7 @@
 using namespace std;
 
 bool isValidNumberOfGames(const string& str) {
-	auto value = 0;
+	int value = 0;
 	try {
 		value = stoi(str);
 	}
@@ -38,7 +38,7 @@ int main() {
 			cout << "Enter number of games (must be even number): ";
 			cin >> numGamesStr;
 		} while (!isValidNumberOfGames(numGamesStr));
-		auto numGames = stoi(numGamesStr);
+		int numGames = stoi(numGamesStr);
 
 		string name1;
 		do {

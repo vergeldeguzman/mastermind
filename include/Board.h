@@ -17,11 +17,11 @@ namespace game {
 constexpr int NUM_HOLES = 4;
 
 enum class KeyPeg {
-	WHITE, BLACK, EMPTY
+	EMPTY, WHITE, BLACK
 };
 
 enum class CodePeg {
-	GREEN, BLUE, RED, ORANGE, YELLOW, PURPLE, EMPTY
+	EMPTY, GREEN, BLUE, RED, ORANGE, YELLOW, PURPLE
 };
 
 using KeyPegs = std::array<KeyPeg, NUM_HOLES>;
@@ -40,11 +40,8 @@ private:
 };
 
 struct Row {
-	CodePegs codePegs { {CodePeg::EMPTY, CodePeg::EMPTY, CodePeg::EMPTY, CodePeg::EMPTY} };
-	KeyPegs keyPegs { {KeyPeg::EMPTY, KeyPeg::EMPTY, KeyPeg::EMPTY, KeyPeg::EMPTY} };
-	Row(const CodePegs& codes, const KeyPegs& keys) :
-		codePegs(codes), keyPegs(keys) {
-	}
+	CodePegs codePegs;
+	KeyPegs keyPegs;
 };
 
 class Board {
