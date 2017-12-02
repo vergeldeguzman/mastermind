@@ -19,7 +19,7 @@ namespace game {
 
 CodePegs MasterMind::askCodePegs() const {
 	CodePegs codePegs;
-	auto success = false;
+	bool success = false;
 	while (!success) {
 		try {
 			string str = "";
@@ -41,9 +41,10 @@ CodePegs MasterMind::askSecretCode(const Player& player) const {
 		<< "CodeMaker " << player.getName() << ", enter 4 secret code pegs seperated by comma"
 		<< endl;
 
-	auto codePegs = askCodePegs();
+	CodePegs codePegs = askCodePegs();
+
 	// clear screen
-	for (auto i = 0; i < 50; ++i) {
+	for (int i = 0; i < 50; ++i) {
 		cout << endl;
 	}
 	return codePegs;
@@ -60,21 +61,21 @@ void MasterMind::play() {
 	const KeyPegs allBlackPegs
 		{ KeyPeg::BLACK, KeyPeg::BLACK, KeyPeg::BLACK, KeyPeg::BLACK };
 
-	for (auto count = 0; count < numberOfGames; ++count) {
+	for (int count = 0; count < numberOfGames; ++count) {
 		board.clear();
 
-		auto secretCode = askSecretCode(codeMaker);
+		CodePegs secretCode = askSecretCode(codeMaker);
 		board.setSecretCode(secretCode);
 
 		cout << "*** GAME " << count + 1 << " ***" << endl;
-		auto isGameOver = false;
+		bool isGameOver = false;
 		while (!isGameOver) {
 			cout << board.toString();
-			auto guessPegs = askGuessCode(codeBreaker);
+			CodePegs guessPegs = askGuessCode(codeBreaker);
 			codeMaker.incScore();
 
 			board.addGuessCode(guessPegs);
-			auto keyPegs = board.getResultKeyPegs();
+			KeyPegs keyPegs = board.getResultKeyPegs();
 
 			if (keyPegs == allBlackPegs) {
 				cout << codeBreaker.getName() << " won the game!!!" << endl;
@@ -104,14 +105,17 @@ void MasterMind::play() {
 
 
 CodePegs MasterMind::toCodePegs(const string& str) const {
-	auto tokens = utils::splitString(str, ',');
-	if (tokens.size() != NUM_HOLES) {
+	CodePegs codePegs;
+	vector<string> tokens = utils::splitString(str, ',');
+	if (tokens.size() != codePegs.size()) {
 		throw MasterMindException("Invalid number of code pegs! Must be 4 code pegs");
 	}
-	CodePegs codePegs;
-	for (size_t idx = 0; idx < tokens.size(); ++idx) {
-		codePegs[idx] = toCodePeg(utils::trim(tokens[idx]));
-	}
+
+	transform(tokens.begin(), tokens.end(), codePegs.begin(),
+		[this](const string& token) {
+			return toCodePeg(utils::trim(token));
+		});
+
 	return codePegs;
 }
 

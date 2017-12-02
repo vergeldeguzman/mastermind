@@ -1,5 +1,5 @@
 CXX=g++
-INC=-Isrc
+INC=-Iinclude
 CXXFLAGS=-std=c++14 -g -Wall -Werror $(INC)
 
 SRCDIR=src

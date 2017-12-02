@@ -26,15 +26,18 @@ void Board::addGuessCode(const CodePegs& codePegs) {
 	if (rows.size() >= MAX_ROWS) {
 		throw BoardException("Cannot add pegs beyond max row");
 	}
-	auto keyPegs = evaluate(codePegs);
-	rows.push_back(Row(codePegs, keyPegs));
+	rows.push_back(
+			Row{.codePegs=codePegs, .keyPegs=evaluate(codePegs)}
+	);
 }
 
 KeyPegs Board::evaluate(const CodePegs& codePegs) const {
 	KeyPegs keyPegs { KeyPeg::EMPTY, KeyPeg::EMPTY, KeyPeg::EMPTY, KeyPeg::EMPTY };
-	map<int, bool> unmatchIdx;
-	auto keyPegIdx = 0;
-	for (auto i = 0; i < NUM_HOLES; ++i) {
+	map<int, bool> unmatchIdx; // key is peg position, value is counted/processed flag
+	int keyPegIdx = 0;
+
+	// evaluate for correct color and position (BLACK key peg)
+	for (int i = 0; i < NUM_HOLES; ++i) {
 		if (secretPegs[i] == codePegs[i]) {
 			keyPegs[keyPegIdx] = KeyPeg::BLACK;
 			++keyPegIdx;
@@ -44,12 +47,13 @@ KeyPegs Board::evaluate(const CodePegs& codePegs) const {
 		}
 	}
 
+	// evaluate for correct color but wrong position (WHITE key peg)
 	for (const auto & codeIdxs : unmatchIdx) {
-		auto codeIdx = codeIdxs.first;
+		int codeIdx = codeIdxs.first;
 
 		for (auto & secretIdxs : unmatchIdx) {
-			auto secretIdx = secretIdxs.first;
-			auto & counted = secretIdxs.second;
+			int secretIdx = secretIdxs.first;
+			bool & counted = secretIdxs.second;
 			if (!counted && secretPegs[secretIdx] == codePegs[codeIdx]) {
 				keyPegs[keyPegIdx] = KeyPeg::WHITE;
 				++keyPegIdx;
@@ -73,6 +77,7 @@ void Board::setSecretCode(const CodePegs& pegs) {
 	redacted = true;
 	secretPegs = pegs;
 }
+
 string Board::reveal() {
 	redacted = false;
 	return toString();
@@ -95,7 +100,7 @@ string Board::toString(const CodePeg& peg) const {
 	case CodePeg::EMPTY:
 		return " ";
 	default:
-		throw BoardException("Unrecoginize code peg on CodePeg enum");
+		throw BoardException("Unrecognized code peg on CodePeg enum");
 	}
 }
 
@@ -108,7 +113,7 @@ string Board::toString(const KeyPeg& peg) const {
 	case KeyPeg::EMPTY:
 		return " ";
 	default:
-		throw BoardException("Unrecoginize key peg on KeyPeg enum");
+		throw BoardException("Unrecognized key peg on KeyPeg enum");
 	}
 }
 
@@ -124,17 +129,17 @@ string Board::toString() const {
 	for (size_t n = 0; n < MAX_ROWS - rows.size(); ++n) {
 		ss << "|         |      |" << endl;
 	}
-	for (auto rowIter = rows.rbegin(); rowIter != rows.rend(); ++rowIter) {
+	for_each (rows.rbegin(), rows.rend(), [&ss, this](Row row) {
 		ss << "| ";
-		for (const auto & peg : rowIter->codePegs) {
+		for (const auto & peg : row.codePegs) {
 			ss << toString(peg) << " ";
 		}
 		ss << "| ";
-		for (const auto & peg : rowIter->keyPegs) {
+		for (const auto & peg : row.keyPegs) {
 			ss << toString(peg);
 		}
 		ss << " |" << endl;
-	}
+	});
 	ss << "+---------+------+" << endl;
 	return ss.str();
 }
